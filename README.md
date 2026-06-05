@@ -30,7 +30,10 @@ cd aes_cpp/ && make run && make test
 ```
 
 ## Referências
+Uma melhor descrição do funcionamento do [algoritmo](aes_cpp/algoritmo.md)
 
 [Dissertação](https://repositorio.unifei.edu.br/jspui/handle/123456789/1693)
+
 [Vídeo](https://www.youtube.com/watch?v=O4xNJsjtN6E)
+
 [Vídeo](https://www.youtube.com/watch?v=BKAaT8_Ql20)
