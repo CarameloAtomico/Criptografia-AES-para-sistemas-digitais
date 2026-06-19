@@ -7,7 +7,7 @@ entity HalfAdder_4bits is
         a, b : in unsigned(3 downto 0);
         sum : out unsigned(3 downto 0)
     );
-end HalfAdder_4bits;
+end entity HalfAdder_4bits;
 
 architecture arch of HalfAdder_4bits is
 begin

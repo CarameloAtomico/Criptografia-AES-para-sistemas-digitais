@@ -11,10 +11,10 @@ entity Mux2x1 is
         in0, in1 : in std_logic_vector(N-1 downto 0);
         z : out std_logic_vector(N-1 downto 0)
     );
-end Mux2x1;
+end entity Mux2x1;
 
 architecture arch of Mux2x1 is
 begin
     z <= in0 when sel = '0' else
-             in1;
+         in1;
 end architecture arch;

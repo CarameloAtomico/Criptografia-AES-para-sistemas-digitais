@@ -14,8 +14,7 @@ end entity VectorRegister;
 
 architecture arch of VectorRegister is
 begin
-    process(clk, enable, inVector)
-        variable reg : std_logic_vector(N-1 downto 0);
+    process(clk)
     begin
         if rising_edge(clk) then
             if (enable = '1') then

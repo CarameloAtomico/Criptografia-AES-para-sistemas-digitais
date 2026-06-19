@@ -6,7 +6,7 @@ entity ShiftRows is
         inState : in std_logic_vector(127 downto 0);
         outState : out std_logic_vector(127 downto 0)
     );
-end entity;
+end entity ShiftRows;
 
 architecture arch of ShiftRows is
     signal a, b, c, d : std_logic_vector(31 downto 0);

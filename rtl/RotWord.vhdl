@@ -6,7 +6,7 @@ entity RotWord is
         inWord : in std_logic_vector(31 downto 0);
         outWord : out std_logic_vector(31 downto 0)
     );
-end RotWord;
+end entity RotWord;
 
 architecture arch of RotWord is
     signal a, b, c, d : std_logic_vector(7 downto 0);

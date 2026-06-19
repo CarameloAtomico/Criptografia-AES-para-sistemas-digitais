@@ -14,11 +14,20 @@ architecture arch of Counter is
 begin
     mux : entity work.Mux2x1(arch)
         generic map (N => 4)
-        port map (sel => sel, in0 => i, in1 => "0001", z => mux_out);
+        port map (
+            sel => sel, 
+            in0 => i, 
+            in1 => "0001", 
+            z => mux_out
+        );
     
     reg : entity work.VectorRegister(arch)
         generic map (N => 4)
-        port map (clk => clk, enable => enable, inVector => mux_out, outVector => reg_out);
+        port map (clk => clk, 
+            enable => enable, 
+            inVector => mux_out, 
+            outVector => reg_out
+        );
 
     adder : entity work.HalfAdder_4bits(arch)
         port map (a => unsigned(reg_out), b => to_unsigned(1, 4), sum => unsigned(i));

@@ -9,7 +9,7 @@ entity AES128 is
         ciphertext : out std_logic_vector(127 downto 0);
         done : out std_logic
     );
-end AES128;
+end entity AES128;
 
 architecture arch of AES128 is
 begin
