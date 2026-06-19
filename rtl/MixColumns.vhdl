@@ -8,19 +8,12 @@ entity MixColumns is
         clk, enable : in std_logic;
         outState : out std_logic_vector(127 downto 0)
     );
-end MixColumns;
+end entity MixColumns;
 
 architecture arch of MixColumns is
     signal a0, a1, a2, a3, mul2a0out, mul2a1out, mul2a2out, mul2a3out : std_logic_vector(7 downto 0);
     signal demux11, demux12, demux13, demux14, demux21, demux22, demux23, demux24, demux31, demux32, demux33, demux34, demux41, demux42, demux43, demux44 : std_logic_vector(7 downto 0);
 begin
-    -- 127 downto 0
-
-    -- 127 downto 96
-    -- 95 downto 64
-    -- 63 downto 32
-    -- 31 downto 0
-
     muxa0 : entity work.Mux4x2_8bits(arch)
         port map(
             sel => sel, 
@@ -137,5 +130,4 @@ begin
             inVector => demux11 & demux12 & demux13 & demux14 & demux21 & demux22 & demux23 & demux24 & demux31 & demux32 & demux33 & demux34 & demux41 & demux42 & demux43 & demux44,
             outVector => outState
         );
-    
 end architecture arch;
