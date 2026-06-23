@@ -95,8 +95,8 @@ begin
             port map(
                 clk => clk,
                 enable => not sel(1) and not sel(0),
-                inVector => demux11,
-                outVector => dreg_out11
+                vector_in => demux11,
+                vector_out => dreg_out11
             );
     
     register1 : entity work.VectorRegister(arch)
@@ -104,8 +104,8 @@ begin
             port map(
                 clk => clk,
                 enable => not sel(1) and sel(0),
-                inVector => demux12,
-                outVector => dreg_out12
+                vector_in => demux12,
+                vector_out => dreg_out12
             );
     
     register2 : entity work.VectorRegister(arch)
@@ -113,8 +113,8 @@ begin
             port map(
                 clk => clk,
                 enable => sel(1) and not sel(0),
-                inVector => demux13,
-                outVector => dreg_out13
+                vector_in => demux13,
+                vector_out => dreg_out13
             );
 
     register3: entity work.VectorRegister
@@ -124,8 +124,8 @@ begin
         port map(
             clk       => clk,
             enable    => sel(1) and sel(0),
-            inVector  => demux14,
-            outVector => dreg_out14
+            vector_in  => demux14,
+            vector_out => dreg_out14
         );
     
 
@@ -147,8 +147,8 @@ begin
         port map(
             clk       => clk,
             enable    => not sel(1) and not sel(0),
-            inVector  => demux21,
-            outVector => dreg_out21
+            vector_in  => demux21,
+            vector_out => dreg_out21
         );
 
     register5: entity work.VectorRegister
@@ -158,8 +158,8 @@ begin
         port map(
             clk       => clk,
             enable    => not sel(1) and sel(0),
-            inVector  => demux22,
-            outVector => dreg_out22
+            vector_in  => demux22,
+            vector_out => dreg_out22
         );
 
     register6: entity work.VectorRegister
@@ -169,8 +169,8 @@ begin
         port map(
             clk       => clk,
             enable    => sel(1) and not sel(0),
-            inVector  => demux23,
-            outVector => dreg_out23
+            vector_in  => demux23,
+            vector_out => dreg_out23
         );
 
     register7: entity work.VectorRegister
@@ -180,8 +180,8 @@ begin
         port map(
             clk       => clk,
             enable    => sel(1) and sel(0),
-            inVector  => demux24,
-            outVector => dreg_out24
+            vector_in  => demux24,
+            vector_out => dreg_out24
         );
     
     
@@ -204,8 +204,8 @@ begin
         port map(
             clk       => clk,
             enable    => not sel(1) and not sel(0),
-            inVector  => demux31,
-            outVector => dreg_out31
+            vector_in  => demux31,
+            vector_out => dreg_out31
         );
 
     register9: entity work.VectorRegister
@@ -215,8 +215,8 @@ begin
         port map(
             clk       => clk,
             enable    => not sel(1) and sel(0),
-            inVector  => demux32,
-            outVector => dreg_out32
+            vector_in  => demux32,
+            vector_out => dreg_out32
         );
 
     register10: entity work.VectorRegister
@@ -226,8 +226,8 @@ begin
         port map(
             clk       => clk,
             enable    => sel(1) and not sel(0),
-            inVector  => demux33,
-            outVector => dreg_out33
+            vector_in  => demux33,
+            vector_out => dreg_out33
         );
 
     register11: entity work.VectorRegister
@@ -237,8 +237,8 @@ begin
         port map(
             clk       => clk,
             enable    => sel(1) and sel(0),
-            inVector  => demux34,
-            outVector => dreg_out34
+            vector_in  => demux34,
+            vector_out => dreg_out34
         );
     
 
@@ -260,8 +260,8 @@ begin
         port map(
             clk       => clk,
             enable    => not sel(1) and not sel(0),
-            inVector  => demux41,
-            outVector => dreg_out41
+            vector_in  => demux41,
+            vector_out => dreg_out41
         );
 
     register13: entity work.VectorRegister
@@ -271,8 +271,8 @@ begin
         port map(
             clk       => clk,
             enable    => not sel(1) and sel(0),
-            inVector  => demux42,
-            outVector => dreg_out42
+            vector_in  => demux42,
+            vector_out => dreg_out42
         );
 
     register14: entity work.VectorRegister
@@ -282,8 +282,8 @@ begin
         port map(
             clk       => clk,
             enable    => sel(1) and not sel(0),
-            inVector  => demux43,
-            outVector => dreg_out43
+            vector_in  => demux43,
+            vector_out => dreg_out43
         );
 
     register15: entity work.VectorRegister
@@ -293,8 +293,8 @@ begin
         port map(
             clk       => clk,
             enable    => sel(1) and sel(0),
-            inVector  => demux44,
-            outVector => dreg_out44
+            vector_in  => demux44,
+            vector_out => dreg_out44
         );
 
     stateRegister : entity work.VectorRegister(arch)
@@ -302,7 +302,7 @@ begin
         port map(
             clk => clk,
             enable => enable,
-            inVector => dreg_out11 & dreg_out12 & dreg_out13 & dreg_out14 & dreg_out21 & dreg_out22 & dreg_out23 & dreg_out24 & dreg_out31 & dreg_out32 & dreg_out33 & dreg_out34 & dreg_out41 & dreg_out42 & dreg_out43 & dreg_out44,
-            outVector => outState
+            vector_in => dreg_out11 & dreg_out12 & dreg_out13 & dreg_out14 & dreg_out21 & dreg_out22 & dreg_out23 & dreg_out24 & dreg_out31 & dreg_out32 & dreg_out33 & dreg_out34 & dreg_out41 & dreg_out42 & dreg_out43 & dreg_out44,
+            vector_out => outState
         );
 end architecture arch;

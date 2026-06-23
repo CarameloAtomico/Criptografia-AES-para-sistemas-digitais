@@ -14,8 +14,8 @@ architecture arch of G_Function is
 begin
     rotword : entity work.RotWord
         port map(
-            inWord  => a,
-            outWord => rotated
+            word_in  => a,
+            word_out => rotated
         );    
 
     gen_sboxes : for i in 0 to 3 generate
