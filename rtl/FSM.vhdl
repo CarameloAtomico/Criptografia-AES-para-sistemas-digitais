@@ -6,8 +6,8 @@ entity FSM is
     port(
         clk, reset, start : in std_logic;
         maior : in std_logic;
-
-        cState, cKey, cAddKey, sKey, sRoundCont, cRoundCont, sMuxBox, sState, cState_sbox, cSubBytes, cState_shiftrows, cState_mixColumns, sFinalRound, cFinalRound : out std_logic
+        cState, cKey, cAddKey, cRoundCont, cState_sbox, cSubBytes, cState_shiftrows, cState_mixColumns, cFinalRound : out std_logic;
+        sKey, sRoundCont, sMuxBox, sState,  sFinalRound : out std_logic
     );
 end entity FSM;
 
