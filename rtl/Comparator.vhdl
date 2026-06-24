@@ -7,12 +7,12 @@ entity Comparator is
         N : positive := 4
         );
     port (
-        a, b : in std_logic_vector(N-1 downto 0);
+        a, b : in unsigned(N-1 downto 0);
         maior : out std_logic
     );
 end entity Comparator;
 
 architecture arch of Comparator is
 begin
-    maior <= '1' when unsigned(a) > unsigned(b) else '0';
+    maior <= '1' when a >= b else '0';
 end architecture arch;

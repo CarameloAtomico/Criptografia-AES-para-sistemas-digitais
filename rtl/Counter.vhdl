@@ -42,8 +42,13 @@ begin
             sum => i
         );
 
-
-    -- maior = 1 quando i for 9
-    maior <= '1' when i >= to_unsigned(limit, N) else '0';
-
+    comparator : entity work.Comparator
+        generic map(
+            N => N
+        )
+        port map(
+            a     => i,
+            b     => to_unsigned(limit, N),
+            maior => maior
+        );
 end architecture arch;
