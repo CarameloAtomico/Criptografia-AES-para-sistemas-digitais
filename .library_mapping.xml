@@ -8,6 +8,7 @@
   <Mappings Location="rtl/AddRoundKey.vhdl" Library="work"/>
   <Mappings Location="rtl/Comparator.vhdl" Library="work"/>
   <Mappings Location="rtl/Counter.vhdl" Library="work"/>
+  <Mappings Location="rtl/Demux16x4.vhdl" Library="work"/>
   <Mappings Location="rtl/Demux4x1.vhdl" Library="work"/>
   <Mappings Location="rtl/FSM.vhdl" Library="work"/>
   <Mappings Location="rtl/G_Function.vhdl" Library="work"/>
@@ -22,5 +23,6 @@
   <Mappings Location="rtl/ROM_Sbox.vhdl" Library="work"/>
   <Mappings Location="rtl/RotWord.vhdl" Library="work"/>
   <Mappings Location="rtl/ShiftRows.vhdl" Library="work"/>
+  <Mappings Location="rtl/SubBytes.vhdl" Library="work"/>
   <Mappings Location="rtl/VectorRegister.vhdl" Library="work"/>
 </com.sigasi.hdt.shared.librarymapping.model:LibraryMappings>
