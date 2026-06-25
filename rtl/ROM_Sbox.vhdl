@@ -48,14 +48,10 @@ architecture arch of ROM_Sbox is
     );
 begin
     process(address)
-        variable substituted : std_logic_vector(7 downto 0);
         variable byte_addr   : natural range 0 to 255;
     begin
-        for i in 0 to 7 loop
-            byte_addr := to_integer(unsigned(address((8*i)+7 downto 8*i)));
-            substituted((8*i)+7 downto 8*i) := SBOX(byte_addr);
-        end loop;
-
-        data_out <= substituted;
+       byte_addr := to_integer(unsigned(address));
+       
+        data_out  <= SBOX(byte_addr);
     end process;
 end architecture arch;
