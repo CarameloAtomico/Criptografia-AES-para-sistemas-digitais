@@ -20,7 +20,6 @@ architecture arch of CounterSubBytes is
 
 begin
 
-    -- Soma 1 ao valor atual do contador
     adder: entity work.HalfAdder_4bits(arch)
         port map (
             a   => unsigned(reg_out),
@@ -28,7 +27,6 @@ begin
             sum => sum_out
         );
 
-    -- Escolhe entre contar ou zerar
     mux: entity work.Mux2x1(arch)
         generic map (N => 4)
         port map (
@@ -38,7 +36,7 @@ begin
             z => mux_out
         );
 
-    -- Armazena o próximo valor
+
     reg: entity work.VectorRegister(arch)
         generic map (N => 4)
         port map (
