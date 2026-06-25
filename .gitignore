@@ -22,3 +22,6 @@ build
 
 .sigasi
 project.sigasi
+
+rtl/**
+!rtl/**/*.vhdl

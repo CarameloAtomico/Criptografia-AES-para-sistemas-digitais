@@ -3,6 +3,10 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity Counter is
+    generic (
+        limit : positive := 9;
+        N : positive := 4
+        );
     port (
         clk, enable, sel : in std_logic;
         maior : out std_logic
@@ -10,38 +14,41 @@ entity Counter is
 end Counter;
 
 architecture arch of Counter is
-    signal i, mux_out, reg_out : std_logic_vector(3 downto 0);
+    signal i : unsigned(N - 1 downto 0); 
+    signal muxOut, regOut : std_logic_vector(N - 1 downto 0);
 begin
     mux : entity work.Mux2x1(arch)
-        generic map (N => 4)
+        generic map (N => N)
         port map (
             sel => sel, 
-            in0 => i, 
-            in1 => "0001", 
-            z => mux_out
+            in0 => std_logic_vector(i), 
+            in1 => std_logic_vector(to_unsigned(1, N)), 
+            z => muxOut
         );
     
     reg : entity work.VectorRegister(arch)
-        generic map (N => 4)
+        generic map (N => N)
         port map (clk => clk, 
             enable => enable, 
-            inVector => mux_out, 
-            outVector => reg_out
+            vector_in => muxOut, 
+            vector_out => regOut
         );
 
-    adder : entity work.HalfAdder_4bits(arch)
-        port map (a => unsigned(reg_out), b => to_unsigned(1, 4), sum => unsigned(i));
+    adder : entity work.HalfAdder(arch)
+        generic map (N => N)
+        port map (
+            a => unsigned(regOut), 
+            b => to_unsigned(1, N), 
+            sum => i
+        );
 
-    process(clk)
-        variable sum : unsigned(i'range);
-    begin
-        if rising_edge(clk) then
-            sum := sum+1;
-        end if;
-        i <= std_logic_vector(sum);
-    end process;
-
-    -- maior = 1 quando i for 9
-    maior <= '1' when i = "1001" else '0';
-
+    comparator : entity work.Comparator
+        generic map(
+            N => N
+        )
+        port map(
+            a     => i,
+            b     => to_unsigned(limit, N),
+            maior => maior
+        );
 end architecture arch;

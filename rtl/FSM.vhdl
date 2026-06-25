@@ -6,8 +6,8 @@ entity FSM is
     port(
         clk, reset, start : in std_logic;
         maior : in std_logic;
-        cState, cKey, cAddKey, cRoundCont, cState_sbox, cSubBytes, cState_shiftrows, cState_mixColumns, cFinalRound : out std_logic;
-        sKey, sRoundCont, sMuxBox, sState,  sFinalRound : out std_logic
+        cState, cKey, cAddKey, cRoundCont, cState_sbox, cState_shiftrows, cState_mixColumns, cFinalRound, cCipher, cCont, cLinhaColuna, cSubBytesCont : out std_logic;
+        sKey, sRoundCont, sMuxBox, sSubBytes, sFinalRound, sColMixed, sCont, sMux : out std_logic
     );
 end entity FSM;
 
@@ -61,5 +61,54 @@ begin
 
     LS : process(CurrentState)
     begin
+        cState <= '0';
+        cKey <= '0';
+        cAddKey <= '0';
+        cRoundCont <= '0';
+        cState_sbox <= '0';
+        cState_shiftrows <= '0';
+        cState_mixColumns <= '0';
+        cFinalRound <= '0';
+        cCipher <= '0';
+        sKey <= '0';
+        sRoundCont <= '0';
+        sMuxBox <= '0';
+        sSubBytes <= '0';
+        sFinalRound <= '0';
+        case CurrentState is
+            when IDLE => 
+            when LOAD => 
+                cState <= '1';
+                cKey <= '1';
+            when KEY_EXPANSION =>
+                cAddKey <= '1';
+                sKey <= '1'; 
+            when INITIAL_ROUND =>
+                sRoundCont <= '1';
+                cRoundCont <= '1';
+                sMuxBox <= '1';
+                cState <= '1'; 
+            when ROUND => 
+                cState_sbox <= '1';
+                cState <= '1';
+                sSubBytes <= '1';
+                sMuxBox <= '0';
+                cState_shiftrows <= '1';
+                cState_mixColumns <= '1';
+                sFinalRound <= '1';
+                sRoundCont <= '0';
+                cRoundCont <= '1';
+            when FINAL_ROUND => 
+                cState <= '1';
+                cState_sbox <= '1';
+                cState_shiftrows <= '1';
+                cState_mixColumns <= '0';
+                cAddKey <= '1';
+                sFinalRound <= '0';
+                cFinalRound <= '1';
+                sSubBytes <= '0';
+            when DONE => 
+                cCipher <= '1';
+        end case;
     end process LS;
 end architecture arch;

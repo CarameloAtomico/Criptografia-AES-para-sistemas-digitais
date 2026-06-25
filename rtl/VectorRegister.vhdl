@@ -7,8 +7,8 @@ entity VectorRegister is
     );
     port (
         clk, enable: in std_logic;
-        in_vector: in std_logic_vector(N-1 downto 0);
-        out_vector: out std_logic_vector(N-1 downto 0)
+        vector_in: in std_logic_vector(N-1 downto 0);
+        vector_out: out std_logic_vector(N-1 downto 0)
     );
 end entity VectorRegister;
 
@@ -18,7 +18,7 @@ begin
     begin
         if rising_edge(clk) then
             if (enable = '1') then
-                out_vector <= in_vector;
+                vector_out <= vector_in;
             end if;
         end if;
     end process;

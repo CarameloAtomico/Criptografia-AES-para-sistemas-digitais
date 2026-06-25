@@ -1,0 +1,27 @@
+{
+    "grupo": {
+        "nome": "02208B-Grupo-C",
+        "alunos": [
+          {"nome": "João Pedro Kuhn", "matricula": "25200378"},
+          {"nome": "Arthur de Campos Martins", "matricula": "25203686"},
+          {"nome": "Davi Delazaro Altoé", "matricula": "25205753"}
+        ]
+    },
+    "quartus": {
+        "os": "Ubuntu (imagem Quartus II)",
+        "versao": "13.0.1 (completar)",
+        "fpga": {
+            "familia": "Cyclone II",
+            "dispositivo": "EP2C5AF256A7"
+        }
+    },
+    "utilizacao": {
+        "total combinational functions": 123,
+        "dedicated logic registers": 12,
+        "total pins": 5
+    },
+    "atraso": {
+        "Fmax": 2.5,
+        "unidade": "MHz"
+    }
+}
