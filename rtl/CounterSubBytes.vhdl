@@ -20,12 +20,12 @@ architecture arch of CounterSubBytes is
 
 begin
 
-    adder: entity work.HalfAdder_4bits(arch)
-        port map (
+    adder: entity work.HalfAdder(arch)
+        port map ( 
             a   => unsigned(reg_out),
             b   => to_unsigned(1, 4),
             sum => sum_out
-        );
+        ); 
 
     mux: entity work.Mux2x1(arch)
         generic map (N => 4)
@@ -42,8 +42,8 @@ begin
         port map (
             clk        => clk,
             enable     => enable,
-            in_vector  => mux_out,
-            out_vector => reg_out
+            vector_in  => mux_out, 
+            vector_out => reg_out
         );
 
     subBytesDone <= '1' when reg_out = "1111" else '0';
