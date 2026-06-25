@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<com.sigasi.hdt.shared.librarymapping.model:LibraryMappings xmlns:com.sigasi.hdt.shared.librarymapping.model="com.sigasi.hdt.vhdl.scoping.librarymapping" Version="2">
+  <Mappings Location="Common Libraries/IEEE" Library="ieee"/>
+  <Mappings Location="Common Libraries/IEEE Synopsys" Library="ieee"/>
+  <Mappings Location="Common Libraries" Library="not mapped"/>
+  <Mappings Location="Common Libraries/STD" Library="std"/>
+  <Mappings Location="rtl/AES128.vhdl" Library="work"/>
+  <Mappings Location="rtl/AddRoundKey.vhdl" Library="work"/>
+  <Mappings Location="rtl/Comparator.vhdl" Library="work"/>
+  <Mappings Location="rtl/Counter.vhdl" Library="work"/>
+  <Mappings Location="rtl/Demux4x1.vhdl" Library="work"/>
+  <Mappings Location="rtl/FSM.vhdl" Library="work"/>
+  <Mappings Location="rtl/G_Function.vhdl" Library="work"/>
+  <Mappings Location="rtl/HalfAdder.vhdl" Library="work"/>
+  <Mappings Location="rtl/KeyExpansion.vhdl" Library="work"/>
+  <Mappings Location="rtl/MixColumns.vhdl" Library="work"/>
+  <Mappings Location="rtl/Mul2.vhdl" Library="work"/>
+  <Mappings Location="rtl/Mux16x4.vhdl" Library="work"/>
+  <Mappings Location="rtl/Mux2x1.vhdl" Library="work"/>
+  <Mappings Location="rtl/Mux4x2_8bits.vhdl" Library="work"/>
+  <Mappings Location="rtl/ROM_Rcon.vhdl" Library="work"/>
+  <Mappings Location="rtl/ROM_Sbox.vhdl" Library="work"/>
+  <Mappings Location="rtl/RotWord.vhdl" Library="work"/>
+  <Mappings Location="rtl/ShiftRows.vhdl" Library="work"/>
+  <Mappings Location="rtl/VectorRegister.vhdl" Library="work"/>
+</com.sigasi.hdt.shared.librarymapping.model:LibraryMappings>
