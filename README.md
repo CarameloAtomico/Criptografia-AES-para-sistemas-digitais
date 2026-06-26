@@ -15,6 +15,8 @@ Esse algoritmo já é amplamente utilizada em processadores e  é essencial para
 
 AES é um algoritmo de criptografia simétrica
 
+Uma melhor descrição do funcionamento do [algoritmo](aes_cpp/algoritmo.md)
+
 
  Para executar o código python em aes_python
 
@@ -29,7 +31,6 @@ cd aes_cpp/ && make run && make test
 ```
 
 ## Referências
-Uma melhor descrição do funcionamento do [algoritmo](aes_cpp/algoritmo.md)
 
 [Dissertação](https://repositorio.unifei.edu.br/jspui/handle/123456789/1693)
 
