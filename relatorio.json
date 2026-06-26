@@ -12,8 +12,8 @@
         ]
     },
     "quartus": {
-        "os": "Ubuntu (imagem Quartus II)",
-        "versao": "13.0.1 (completar)",
+        "os": "Linux Mint 22.3 - Cinnamon 64-bit",
+        "versao": "25.1std.0",
         "fpga": {
             "familia": "Cyclone IV E",
             "dispositivo": "EP4CE40F29C7"
