@@ -25,13 +25,10 @@ begin
             word_out => rotated
         );    
 
-    gen_sboxes : for i in 0 to 3 generate
-        sbox : entity work.ROM_Sbox
-            port map(
-                address  => rotated(((3 - i) + 1) * 8 - 1 downto (3 - i) * 8),
-                data_out => sboxOut(((3 - i) + 1) * 8 - 1 downto (3 - i) * 8)
-            );
-    end generate gen_sboxes;
+	sbox3 : entity work.ROM_Sbox port map(address => rotated(31 downto 24), data_out => sboxOut(31 downto 24));
+	sbox2 : entity work.ROM_Sbox port map(address => rotated(23 downto 16), data_out => sboxOut(23 downto 16));
+	sbox1 : entity work.ROM_Sbox port map(address => rotated(15 downto 8),  data_out => sboxOut(15 downto 8));
+	sbox0 : entity work.ROM_Sbox port map(address => rotated(7 downto 0),   data_out => sboxOut(7 downto 0));
     
     round_minus_one <= unsigned(round) - 1;
 
