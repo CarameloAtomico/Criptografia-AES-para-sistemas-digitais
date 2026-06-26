@@ -4,305 +4,62 @@ use ieee.std_logic_1164.all;
 entity MixColumns is
     port (
         inState : in std_logic_vector(127 downto 0);
-        sel : in std_logic_vector(1 downto 0);
-        clk, enable : in std_logic;
         outState : out std_logic_vector(127 downto 0)
     );
 end entity MixColumns;
 
 architecture arch of MixColumns is
-    signal a0, a1, a2, a3, mul2a0out, mul2a1out, mul2a2out, mul2a3out : std_logic_vector(7 downto 0);
-    signal demux11, demux12, demux13, demux14, demux21, demux22, demux23, demux24, demux31, demux32, demux33, demux34, demux41, demux42, demux43, demux44 : std_logic_vector(7 downto 0);
-    signal dreg_out11, dreg_out12, dreg_out13, dreg_out14, dreg_out21, dreg_out22, dreg_out23, dreg_out24, dreg_out31, dreg_out32, dreg_out33, dreg_out34, dreg_out41, dreg_out42, dreg_out43, dreg_out44 : std_logic_vector(7 downto 0);
+    type byte_array is array (0 to 15) of std_logic_vector(7 downto 0);
+    signal state : byte_array;
+    signal mul2 : byte_array;
+    signal result : byte_array;
 begin
-    muxa0 : entity work.Mux4x2_8bits(arch)
-        port map(
-            sel => sel, 
-            in00 => inState(127 downto 120), 
-            in01 => inState(119 downto 112), 
-            in10 => inState(111 downto 104), 
-            in11 => inState(103 downto 96), 
-            z => a0
-        );
-    
-    muxa1 : entity work.Mux4x2_8bits(arch)
-        port map(
-            sel => sel, 
-            in00 => inState(95 downto 88), 
-            in01 => inState(87 downto 80), 
-            in10 => inState(79 downto 72), 
-            in11 => inState(71 downto 64), 
-            z => a1
-        );
+    gen_bytes : for i in 0 to 15 generate
+    begin
+        state(i) <= inState(127-8*i downto 120-8*i);
+    end generate;
 
-    muxa2 : entity work.Mux4x2_8bits(arch)
-        port map(
-            sel => sel, 
-            in00 => inState(63 downto 56), 
-            in01 => inState(55 downto 48), 
-            in10 => inState(47 downto 40), 
-            in11 => inState(39 downto 32), 
-            z => a2
-        );
-
-    muxa3 : entity work.Mux4x2_8bits(arch)
-        port map(
-            sel => sel, 
-            in00 => inState(31 downto 24), 
-            in01 => inState(23 downto 16), 
-            in10 => inState(15 downto 8), 
-            in11 => inState(7 downto 0), 
-            z => a3
-        );
-
-    mul2a0 : entity work.Mul2(arch)
-        port map(
-            a => a0,
-            z => mul2a0out
-        );
-    
-    mul2a1 : entity work.Mul2(arch)
-        port map(
-            a => a1,
-            z => mul2a1out
-        );
-
-    mul2a2 : entity work.Mul2(arch)
-        port map(
-            a => a2,
-            z => mul2a2out
-        );
-    
-    mul2a3 : entity work.Mul2(arch)
-        port map(
-            a => a3,
-            z => mul2a3out
-        );
-
-    demux1 : entity work.Demux4x1(arch)
-        generic map(N => 8)
-        port map(
-            sel => sel,
-            a => mul2a0out xor (mul2a1out xor a1) xor a2 xor a3,
-            out00 => demux11,
-            out01 => demux12,
-            out10 => demux13,
-            out11 => demux14
-        );
-
-    register0 : entity work.VectorRegister(arch)
-        generic map(N => 8)
+    gen_mul2 : for i in 0 to 15 generate
+    begin
+        gen_MUL2 : entity work.Mul2
             port map(
-                clk => clk,
-                enable => not sel(1) and not sel(0),
-                vector_in => demux11,
-                vector_out => dreg_out11
+                a => state(i),
+                z => mul2(i)
             );
-    
-    register1 : entity work.VectorRegister(arch)
-        generic map(N => 8)
-            port map(
-                clk => clk,
-                enable => not sel(1) and sel(0),
-                vector_in => demux12,
-                vector_out => dreg_out12
-            );
-    
-    register2 : entity work.VectorRegister(arch)
-        generic map(N => 8)
-            port map(
-                clk => clk,
-                enable => sel(1) and not sel(0),
-                vector_in => demux13,
-                vector_out => dreg_out13
-            );
+    end generate;
 
-    register3: entity work.VectorRegister
-        generic map(
-            N => 8
-        )
-        port map(
-            clk       => clk,
-            enable    => sel(1) and sel(0),
-            vector_in  => demux14,
-            vector_out => dreg_out14
-        );
-    
+    gen_columns : for c in 0 to 3 generate
+    begin
 
-    demux2 : entity work.Demux4x1(arch)
-        generic map(N => 8)
-        port map(
-            sel => sel,
-            a => a0 xor mul2a1out xor (mul2a2out xor a2) xor a3,
-            out00 => demux21,
-            out01 => demux22,
-            out10 => demux23,
-            out11 => demux24
-        );
+        result(c) <=
+            mul2(c)
+            xor (mul2(c+4) xor state(c+4))
+            xor state(c+8)
+            xor state(c+12);
 
-    register4: entity work.VectorRegister
-        generic map(
-            N => 8
-        )
-        port map(
-            clk       => clk,
-            enable    => not sel(1) and not sel(0),
-            vector_in  => demux21,
-            vector_out => dreg_out21
-        );
+        result(c+4) <=
+            state(c)
+            xor mul2(c+4)
+            xor (mul2(c+8) xor state(c+8))
+            xor state(c+12);
 
-    register5: entity work.VectorRegister
-        generic map(
-            N => 8
-        )
-        port map(
-            clk       => clk,
-            enable    => not sel(1) and sel(0),
-            vector_in  => demux22,
-            vector_out => dreg_out22
-        );
+        result(c+8) <=
+            state(c)
+            xor state(c+4)
+            xor mul2(c+8)
+            xor (mul2(c+12) xor state(c+12));
 
-    register6: entity work.VectorRegister
-        generic map(
-            N => 8
-        )
-        port map(
-            clk       => clk,
-            enable    => sel(1) and not sel(0),
-            vector_in  => demux23,
-            vector_out => dreg_out23
-        );
+        result(c+12) <=
+            (mul2(c) xor state(c))
+            xor state(c+4)
+            xor state(c+8)
+            xor mul2(c+12);
 
-    register7: entity work.VectorRegister
-        generic map(
-            N => 8
-        )
-        port map(
-            clk       => clk,
-            enable    => sel(1) and sel(0),
-            vector_in  => demux24,
-            vector_out => dreg_out24
-        );
-    
-    
+    end generate;
 
-    demux3 : entity work.Demux4x1(arch)
-        generic map(N => 8)
-        port map(
-            sel => sel,
-            a => a0 xor a1 xor mul2a2out xor (mul2a3out xor a3),
-            out00 => demux31,
-            out01 => demux32,
-            out10 => demux33,
-            out11 => demux34
-        );
-
-    register8: entity work.VectorRegister
-        generic map(
-            N => 8
-        )
-        port map(
-            clk       => clk,
-            enable    => not sel(1) and not sel(0),
-            vector_in  => demux31,
-            vector_out => dreg_out31
-        );
-
-    register9: entity work.VectorRegister
-        generic map(
-            N => 8
-        )
-        port map(
-            clk       => clk,
-            enable    => not sel(1) and sel(0),
-            vector_in  => demux32,
-            vector_out => dreg_out32
-        );
-
-    register10: entity work.VectorRegister
-        generic map(
-            N => 8
-        )
-        port map(
-            clk       => clk,
-            enable    => sel(1) and not sel(0),
-            vector_in  => demux33,
-            vector_out => dreg_out33
-        );
-
-    register11: entity work.VectorRegister
-        generic map(
-            N => 8
-        )
-        port map(
-            clk       => clk,
-            enable    => sel(1) and sel(0),
-            vector_in  => demux34,
-            vector_out => dreg_out34
-        );
-    
-
-    demux4 : entity work.Demux4x1(arch)
-        generic map(N => 8)
-        port map(
-            sel => sel,
-            a => (mul2a0out xor a0) xor a1 xor a2 xor mul2a3out,
-            out00 => demux41,
-            out01 => demux42,
-            out10 => demux43,
-            out11 => demux44
-        );
-
-    register12: entity work.VectorRegister
-        generic map(
-            N => 8
-        )
-        port map(
-            clk       => clk,
-            enable    => not sel(1) and not sel(0),
-            vector_in  => demux41,
-            vector_out => dreg_out41
-        );
-
-    register13: entity work.VectorRegister
-        generic map(
-            N => 8
-        )
-        port map(
-            clk       => clk,
-            enable    => not sel(1) and sel(0),
-            vector_in  => demux42,
-            vector_out => dreg_out42
-        );
-
-    register14: entity work.VectorRegister
-        generic map(
-            N => 8
-        )
-        port map(
-            clk       => clk,
-            enable    => sel(1) and not sel(0),
-            vector_in  => demux43,
-            vector_out => dreg_out43
-        );
-
-    register15: entity work.VectorRegister
-        generic map(
-            N => 8
-        )
-        port map(
-            clk       => clk,
-            enable    => sel(1) and sel(0),
-            vector_in  => demux44,
-            vector_out => dreg_out44
-        );
-
-    stateRegister : entity work.VectorRegister(arch)
-        generic map(N => 128)
-        port map(
-            clk => clk,
-            enable => enable,
-            vector_in => dreg_out11 & dreg_out12 & dreg_out13 & dreg_out14 & dreg_out21 & dreg_out22 & dreg_out23 & dreg_out24 & dreg_out31 & dreg_out32 & dreg_out33 & dreg_out34 & dreg_out41 & dreg_out42 & dreg_out43 & dreg_out44,
-            vector_out => outState
-        );
+    gen_output : for i in 0 to 15 generate
+    begin
+        outState(127-8*i downto 120-8*i) <= result(i);
+    end generate;
+                
 end architecture arch;
