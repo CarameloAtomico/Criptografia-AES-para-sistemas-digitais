@@ -9,6 +9,7 @@ entity Counter is
         );
     port (
         clk, enable, sel : in std_logic;
+        count:out std_logic_vector(N-1 downto 0);
         maior : out std_logic
     );
 end Counter;
@@ -51,4 +52,5 @@ begin
             b     => to_unsigned(limit, N),
             maior => maior
         );
+        count <= regOut;
 end architecture arch;
