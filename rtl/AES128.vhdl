@@ -11,13 +11,12 @@ entity AES128 is
 end entity AES128;
 
 architecture arch of AES128 is
-    signal maior : std_logic;
+    signal maior, maior2 : std_logic;
     
-    signal cState, cKey, cRoundCont, cFinalRound, cCipher : std_logic;
+    signal cRegisters, cCont, cState, cKey, cRoundCont, cFinalRound, cCipher : std_logic;
     
-    signal sKey, sRoundCont, sSubBytes, sFinalRound : std_logic;
-    signal cCont_sig : std_logic;
-signal sMux_sig          : std_logic;
+    signal sAddFinal, sCont, sRoundCont, sSubBytes, sFinalRound : std_logic;
+    signal doneSignal : std_logic;
     
 begin
 
@@ -27,34 +26,45 @@ begin
             reset       => rst,
             start       => start,
             maior       => maior,
+            maior2      => maior2,
             cState      => cState,
             cKey        => cKey,
             cRoundCont  => cRoundCont,
             cFinalRound => cFinalRound,
-            cCipher     => cCipher,
-            sKey        => sKey,
+            sCont       => sCont,
+            cCont       => cCont,
+            cRegisters  => cRegisters,
             sRoundCont  => sRoundCont,
-            sSubBytes   => sSubBytes,  
             sFinalRound => sFinalRound,
-            doneSignal  => done        
+            sSubBytes   => sSubBytes,
+            sAddFinal   => sAddFinal,
+            cCipher     => cCipher,
+            doneSignal  => doneSignal
         );
-    
-   OB : entity work.OB
+        done <= doneSignal;
+
+    OB : entity work.OB
         port map(
             clk         => clk,
-            rst         => rst, 
+            rst         => rst,
             cState      => cState,
             cKey        => cKey,
             cRoundCont  => cRoundCont,
             cFinalRound => cFinalRound,
-            cCipher     => cCipher,
-            sKey        => sKey,
+            sCont       => sCont,
+            cCont       => cCont,
+            cRegisters  => cRegisters,
             sRoundCont  => sRoundCont,
             sFinalRound => sFinalRound,
-            sMux        => sSubBytes,  
+            sSubBytes   => sSubBytes,
+            sAddFinal   => sAddFinal,
+            cCipher     => cCipher,
             plaintext   => plaintext,
             ent_key     => key,
             maior       => maior,
+            maior2      => maior2,
             ciphertext  => ciphertext
         );
+    
+    
 end architecture arch;

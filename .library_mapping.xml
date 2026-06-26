@@ -21,6 +21,7 @@
   <Mappings Location="rtl/Mux16x4.vhdl" Library="work"/>
   <Mappings Location="rtl/Mux2x1.vhdl" Library="work"/>
   <Mappings Location="rtl/Mux4x2_8bits.vhdl" Library="work"/>
+  <Mappings Location="rtl/OB.vhdl" Library="work"/>
   <Mappings Location="rtl/ROM_Rcon.vhdl" Library="work"/>
   <Mappings Location="rtl/ROM_Sbox.vhdl" Library="work"/>
   <Mappings Location="rtl/RotWord.vhdl" Library="work"/>

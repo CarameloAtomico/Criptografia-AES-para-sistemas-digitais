@@ -1,136 +1,197 @@
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 entity OB is
     port (
         -- Clock
         clk, rst : in std_logic; 
         -- Control
-        cState, cKey, cRoundCont, cFinalRound, cCipher: in std_logic;
-        sKey, sRoundCont,   sFinalRound, sMux : in std_logic;
+        cState, cKey,  cRoundCont, cFinalRound, sCont, cCont, cRegisters,
+        sRoundCont, sFinalRound, sSubBytes, sAddFinal, cCipher : in std_logic;
         
         plaintext, ent_key : in std_logic_vector(127 downto 0);
 
-        maior : out std_logic;
+        maior, maior2 : out std_logic;
         -- Encrypted text        
         ciphertext : out std_logic_vector(127 downto 0)
     );
 end entity OB;
 
 architecture arch of OB is
-   signal stateRegOut, keyRegOut       : std_logic_vector(127 downto 0);
-    signal keyMuxOut, roundKey          : std_logic_vector(127 downto 0);
-    signal addRndKey1Out, subBtsMuxOut  : std_logic_vector(127 downto 0);
-    signal subBtsOut, sftRowOut         : std_logic_vector(127 downto 0);
-    signal mixClmOut, finalRoundMuxOut  : std_logic_vector(127 downto 0);
-    signal addRndKey2Out, finalRegOut   : std_logic_vector(127 downto 0);
+    signal stateRegister, keyRegister : std_logic_vector(127 downto 0);
+    signal firstAddRoundOut, keyExpansion_out : std_logic_vector(127 downto 0);
+    signal keyExpansion_round : std_logic_vector(3 downto 0);
+    signal indeces : std_logic_vector(5 downto 0); 
 
-    --for KeyExpansion
-    signal roundCount : std_logic_vector(3 downto 0);
+    -- Mux antes do SubBytes
+    signal muxFinalRoundOut, muxFinalRound, muxOut : std_logic_vector(127 downto 0);
+
+    signal BankRegisterOut, SubBytesOut, ShiftRowsOut, MixColumnsOut, MuxRoundFinal : std_logic_vector(127 downto 0);
+    signal final_round_register_out : std_logic_vector(127 downto 0);
 begin
-    -- Count to 9
+
+
+    -- Contador de Rounds
     counter : entity work.Counter
         generic map(
             limit => 9,
             N     => 4
         )
         port map(
-        rst => rst,
             clk    => clk,
+            rst    => rst,
             enable => cRoundCont,
             sel    => sRoundCont,
-            count => roundCount,
+            count  => keyExpansion_round,
             maior  => maior
         );
     
-    -- Encryption algorithm
-    stateRegister : entity work.VectorRegister
-    generic map( N => 128 )
-    port map(
-        clk        => clk,
-        rst        => rst, 
-        enable     => cState,
-        vector_in  => plaintext,
-        vector_out => stateRegOut
-    );
 
-keyRegister : entity work.VectorRegister
-    generic map( N => 128 )
-    port map(
-        clk        => clk,
-        rst        => rst, 
-        enable     => cKey,
-        vector_in  => ent_key,
-        vector_out => keyRegOut
-    );
-    
-    keyMux : entity work.Mux2x1
+    state : entity work.VectorRegister
         generic map(
             N => 128
         )
         port map(
-            sel => sKey,
-            in0 => keyRegOut,
-            in1 => roundKey,
-            z   => keyMuxOut
+            clk        => clk,
+            rst        => rst,
+            enable     => cState,
+            vector_in  => plaintext,
+            vector_out => stateRegister
+        );
+
+    key : entity work.VectorRegister
+        generic map(
+            N => 128
+        )
+        port map(
+            clk        => clk,
+            rst        => rst,
+            enable     => cKey,
+            vector_in  => ent_key,
+            vector_out => keyRegister
+        );
+
+    keyExoand : entity work.KeyExpansion
+        port map(
+            key_in_1 => keyRegister(127 downto 96),
+            key_in_2 => keyRegister(95 downto 64),
+            key_in_3 => keyRegister(63 downto 32),
+            key_in_4 => keyRegister(31 downto 0),
+            round    => keyExpansion_round,
+            key_out  => keyExpansion_out,
+            sCont    => sCont,
+            cCont    => cCont,
+            indeces  => indeces,
+            maior2   => maior2,
+            clk => clk
+        );
+
+    BlocoRegistradores : entity work.KeyRegisterBank
+        port map(
+            clk        => clk,
+            cRegisters => cRegisters,
+            index      => unsigned(indeces),
+            key_in     => keyExpansion_out,
+            key_out    => BankRegisterOut
         );
     
-    addRoundKey_initial : entity work.AddRoundKey
+    
+
+    firstAddRoundKey : entity work.AddRoundKey
         port map(
-            inState  => stateRegOut,
-            inKey    => keyMuxOut,
-            outState => addRndKey1Out
+            inState  => stateRegister,
+            inKey    => keyRegister,
+            outState => firstAddRoundOut
         );
-SubBytesMux : entity work.Mux2x1
-        generic map(N => 128)
+
+    -- Início dos rounds de criptografia
+    muxRound : entity work.Mux2x1
+        generic map(
+            N => 128
+        )
         port map(
-            sel => sMux, -- Um sinal de seleção vindo da FSM (ex: '0' para texto inicial, '1' para rodadas)
-            in0 => addRndKey1Out, -- Texto inicial + K0
-            in1 => finalRegOut,   -- Resultado salvo da rodada anterior (Garante o sincronismo do clock!)
-            z   => subBtsMuxOut
+            sel => sSubBytes,
+            in0 => muxFinalRound,
+            in1 => firstAddRoundOut,
+            z   => muxOut
         );
-    SubBytes : entity work.sub_byte
-    port map(
-        pre_sbox  => subBtsMuxOut,
-        pos_sbox => subBtsOut
-    );
+
+    subBytes : entity work.sub_byte
+        port map(
+            pre_sbox => muxOut,
+            pos_sbox => SubBytesOut
+        );
+
     ShiftRows : entity work.ShiftRows
-        port map(state_in => subBtsOut, state_out => SftRowOut);
+        port map(
+            state_in  => SubBytesOut,
+            state_out => ShiftRowsOut
+        );
+
+    mixColumns : entity work.MixColumns
+        port map(
+            inState  => ShiftRowsOut,
+            outState => MixColumnsOut
+        );
     
-    MixColumns_inst : entity work.MixColumns
+
+
+    muxColumns : entity work.Mux2x1
+        generic map(
+            N => 128
+        )
         port map(
-            inState  => SftRowOut,
-            outState => mixClmOut
+            sel => sFinalRound,
+            in0 => ShiftRowsOut,
+            in1 => MixColumnsOut,
+            z   => MuxRoundFinal
         );
-    FinalRoundMux : entity work.Mux2x1
-        generic map(N => 128)
-        port map(sel => sFinalRound, in0 => mixClmOut, in1 => sftRowOut, z => finalRoundMuxOut);
+
+    FinalAddRoundKey : entity work.AddRoundKey
+        port map(
+            inState  => MuxRoundFinal,
+            inKey    => BankRegisterOut,
+            outState => muxFinalRoundOut
+        );
+
+    final_round_register : entity work.VectorRegister
+        generic map(
+            N => 128
+        )
+        port map(
+            clk        => clk,
+            rst        => rst,
+            enable     => cFinalround,
+            vector_in  => muxFinalRoundOut,
+            vector_out => final_round_register_out
+        );
     
 
-    addRoundKey_rounds : entity work.AddRoundKey
+    muxFinalRoundKey : entity work.Mux2x1
+        generic map(
+            N => 128
+        )
         port map(
-            inState  => finalRoundMuxOut,
-            inKey    => roundKey,
-            outState => addRndKey2Out
+            sel => sAddFinal,
+            in0 => final_round_register_out,
+            in1 => muxFinalRoundOut,
+            z   => muxFinalRound
         );
+        
 
-    KeyExpansion_inst : entity work.KeyExpansion
+    ciphertext_register : entity work.VectorRegister
+        generic map(
+            N => 128
+        )
         port map(
-            key_in_1 => keyMuxOut(127 downto 96),
-            key_in_2 => keyMuxOut(95 downto 64),
-            key_in_3 => keyMuxOut(63 downto 32),
-            key_in_4 => keyMuxOut(31 downto 0),
-            round    => roundCount,
-            key_out  => roundKey
+            clk        => clk,
+            rst        => rst,
+            enable     => cCipher,
+            vector_in  => final_round_register_out,
+            vector_out => ciphertext
         );
+    
+    
 
-    -- Registrador de realimentação do laço interno do AES
-    FinalRoundRegister : entity work.VectorRegister
-        generic map(N => 128)
-        port map(clk => clk,rst => rst,  enable => cFinalRound, vector_in => addRndKey2Out, vector_out => finalRegOut);
-
-    -- 8. Registrador de Saída (Guarda o Ciphertext finalizado)
-    CipherTextRegister : entity work.VectorRegister
-        generic map(N => 128)
-        port map(clk => clk, enable => cCipher,rst=> rst, vector_in => addRndKey2Out, vector_out => ciphertext);
-        end architecture arch;
+end architecture arch;

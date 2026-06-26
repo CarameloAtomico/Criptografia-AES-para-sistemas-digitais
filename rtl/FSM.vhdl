@@ -4,11 +4,10 @@ use ieee.std_logic_1164.all;
 entity FSM is 
     port(
         clk, reset, start : in std_logic;
-        maior             : in std_logic;
-        
-        cState, cKey, cRoundCont, cFinalRound, cCipher : out std_logic;
-       
-        sKey, sRoundCont, sSubBytes, sFinalRound       : out std_logic;
+        maior, maior2     : in std_logic;
+
+        cState, cKey,  cRoundCont, cFinalRound, sCont, cCont, cRegisters,
+        sRoundCont, sFinalRound, sSubBytes, sAddFinal, cCipher : out std_logic;
         
         doneSignal                                     : out std_logic
     );
@@ -16,7 +15,7 @@ end entity FSM;
 
 architecture arch of FSM is
     
-    type state_type is (IDLE, LOAD, INITIAL_ROUND, ROUND, FINAL_ROUND, DONE);
+    type state_type is (IDLE, LOAD, KEY_EXPANSION, INITIAL_ROUND, ROUND, FINAL_ROUND, DONE);
     signal CurrentState, NextState : state_type;
 begin
 
@@ -31,7 +30,7 @@ begin
     end process REG_STATE;
 
     
-    LPE : process(start, CurrentState, maior)
+    LPE : process(start, CurrentState, maior, maior2)
     begin
         case CurrentState is
             when IDLE =>
@@ -42,9 +41,13 @@ begin
                 end if;
 
             when LOAD =>
-                
-                NextState <= INITIAL_ROUND;
-
+                NextState <= KEY_EXPANSION;
+            when KEY_EXPANSION =>
+                if maior2 = '1' then
+                    NextState <= INITIAL_ROUND;
+                else
+                    NextState <= KEY_EXPANSION;
+                end if;
             when INITIAL_ROUND =>
                 
                 NextState <= ROUND;
@@ -64,9 +67,6 @@ begin
             when DONE =>
              
                 NextState <= IDLE;
-
-            when others =>
-                NextState <= IDLE;
         end case;
     end process LPE;
 
@@ -79,7 +79,6 @@ begin
         cRoundCont  <= '0';
         cFinalRound <= '0';
         cCipher     <= '0';
-        sKey        <= '0';
         sRoundCont  <= '0';
         sSubBytes   <= '0';
         sFinalRound <= '0';
@@ -95,33 +94,32 @@ begin
                 cState <= '1'; 
                 cKey   <= '1'; 
 
+            when KEY_EXPANSION =>
+                sCont <= '1';
+                cCont <= '1';
+                cRegisters <= '1';
+
             when INITIAL_ROUND =>
                 
-                sKey        <= '0';
-                sSubBytes   <= '0'; 
-                cFinalRound <= '1'; 
-                
-                
+                sSubBytes   <= '1'; 
                 sRoundCont  <= '1'; 
                 cRoundCont  <= '1'; 
+
             when ROUND => 
                
-                sSubBytes   <= '1'; 
-                sKey        <= '1';
-                sFinalRound <= '0'; 
+                sSubBytes   <= '0'; 
+                sFinalRound <= '1'; 
                 cFinalRound <= '1'; 
-                
-                
                 sRoundCont  <= '0'; 
                 cRoundCont  <= '1'; 
+                sAddFinal   <= '1';
 
             when FINAL_ROUND => 
                 
                 sSubBytes   <= '1'; 
-                sKey        <= '1'; 
                 sFinalRound <= '1'; 
-                
-              
+                sAddFinal   <= '0';
+
             when DONE => 
                 
                 cCipher    <= '1'; 

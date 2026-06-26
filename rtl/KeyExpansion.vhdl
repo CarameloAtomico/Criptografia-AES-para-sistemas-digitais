@@ -9,7 +9,7 @@ entity KeyExpansion is
         key_in_4 : in  std_logic_vector(31 downto 0); 
         round    : in  std_logic_vector(3 downto 0);  
         key_out  : out std_logic_vector(127 downto 0);
-        sCont, cCont : in std_logic;
+        clk, sCont, cCont : in std_logic;
         indeces : out std_logic_vector(5 downto 0);
         maior2 : out std_logic
     );
@@ -22,7 +22,7 @@ begin
 
     Contador : entity work.CounterKeyExpasion
         port map(
-            clk => cCont,
+            clk => clk,
             sCont => sCont,
             cCont => cCont,
             indice => indeces,
