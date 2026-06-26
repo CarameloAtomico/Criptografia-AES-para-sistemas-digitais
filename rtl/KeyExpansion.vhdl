@@ -8,15 +8,26 @@ entity KeyExpansion is
         key_in_3 : in  std_logic_vector(31 downto 0);
         key_in_4 : in  std_logic_vector(31 downto 0); 
         round    : in  std_logic_vector(3 downto 0);  
-        key_out  : out std_logic_vector(127 downto 0)
+        key_out  : out std_logic_vector(127 downto 0);
+        sCont, cCont : in std_logic;
+        indeces : out std_logic_vector(5 downto 0);
+        maior2 : out std_logic
     );
 end entity;
 
 architecture arch of KeyExpansion is
-
     signal GOut : std_logic_vector(31 downto 0);
     signal w0_new, w1_new, w2_new, w3_new : std_logic_vector(31 downto 0);
 begin
+
+    Contador : entity work.CounterKeyExpasion
+        port map(
+            clk => cCont,
+            sCont => sCont,
+            cCont => cCont,
+            indice => indeces,
+            maior2 => maior2
+        );
 
     Gfunction : entity work.G_Function
         port map(

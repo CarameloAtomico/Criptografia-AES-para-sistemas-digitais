@@ -5,8 +5,8 @@ use ieee.numeric_std.all;
 entity KeyRegisterBank is
     port (
         clk        : in std_logic;
-        write_en   : in std_logic;
-        index      : in unsigned(3 downto 0);
+        cRegisters   : in std_logic;
+        index      : in unsigned(5 downto 0);
         key_in     : in std_logic_vector(127 downto 0);
         key_out    : out std_logic_vector(127 downto 0)
     );
@@ -22,7 +22,7 @@ begin
     process(clk)
     begin
         if rising_edge(clk) then
-            if write_en = '1' then
+            if cRegisters = '1' then
                 mem(to_integer(index)) <= key_in;
             end if;
         end if;

@@ -8,12 +8,14 @@
   <Mappings Location="rtl/AddRoundKey.vhdl" Library="work"/>
   <Mappings Location="rtl/Comparator.vhdl" Library="work"/>
   <Mappings Location="rtl/Counter.vhdl" Library="work"/>
+  <Mappings Location="rtl/CounterKeyExpansion.vhdl" Library="work"/>
   <Mappings Location="rtl/Demux16x4.vhdl" Library="work"/>
   <Mappings Location="rtl/Demux4x1.vhdl" Library="work"/>
   <Mappings Location="rtl/FSM.vhdl" Library="work"/>
   <Mappings Location="rtl/G_Function.vhdl" Library="work"/>
   <Mappings Location="rtl/HalfAdder.vhdl" Library="work"/>
   <Mappings Location="rtl/KeyExpansion.vhdl" Library="work"/>
+  <Mappings Location="rtl/KeyRegisterBank.vhdl" Library="work"/>
   <Mappings Location="rtl/MixColumns.vhdl" Library="work"/>
   <Mappings Location="rtl/Mul2.vhdl" Library="work"/>
   <Mappings Location="rtl/Mux16x4.vhdl" Library="work"/>
