@@ -21,7 +21,7 @@ begin
 
     gen_mul2 : for i in 0 to 15 generate
     begin
-        gen_MUL2 : entity work.Mul2
+        genMUL2 : entity work.Mul2
             port map(
                 a => state(i),
                 z => mul2(i)

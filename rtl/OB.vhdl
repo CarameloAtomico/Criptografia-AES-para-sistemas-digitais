@@ -4,9 +4,9 @@ use ieee.std_logic_1164.all;
 entity OB is
     port (
         -- Clock
-        clk : in std_logic;
+        clk, rst : in std_logic; 
         -- Control
-        cState, cKey, cRoundCont, cFinalRound, cCipher, cCont, cLinhaColuna, cSubBytesCont : in std_logic;
+        cState, cKey, cRoundCont, cFinalRound, cCipher: in std_logic;
         sKey, sRoundCont,   sFinalRound, sMux : in std_logic;
         
         plaintext, ent_key : in std_logic_vector(127 downto 0);
@@ -35,6 +35,7 @@ begin
             N     => 4
         )
         port map(
+        rst => rst,
             clk    => clk,
             enable => cRoundCont,
             sel    => sRoundCont,
@@ -44,26 +45,24 @@ begin
     
     -- Encryption algorithm
     stateRegister : entity work.VectorRegister
-        generic map(
-            N => 128
-        )
-        port map(
-            clk        => clk,
-            enable     => cState,
-            vector_in  => plaintext,
-            vector_out => stateRegOut
-        );
+    generic map( N => 128 )
+    port map(
+        clk        => clk,
+        rst        => rst, 
+        enable     => cState,
+        vector_in  => plaintext,
+        vector_out => stateRegOut
+    );
 
-    keyRegister : entity work.VectorRegister
-        generic map(
-            N => 128
-        )
-        port map(
-            clk        => clk,
-            enable     => cKey,
-            vector_in  => ent_key,
-            vector_out => keyRegOut
-        );
+keyRegister : entity work.VectorRegister
+    generic map( N => 128 )
+    port map(
+        clk        => clk,
+        rst        => rst, 
+        enable     => cKey,
+        vector_in  => ent_key,
+        vector_out => keyRegOut
+    );
     
     keyMux : entity work.Mux2x1
         generic map(
@@ -128,10 +127,10 @@ SubBytesMux : entity work.Mux2x1
     -- Registrador de realimentação do laço interno do AES
     FinalRoundRegister : entity work.VectorRegister
         generic map(N => 128)
-        port map(clk => clk, enable => cFinalRound, vector_in => addRndKey2Out, vector_out => finalRegOut);
+        port map(clk => clk,rst => rst,  enable => cFinalRound, vector_in => addRndKey2Out, vector_out => finalRegOut);
 
     -- 8. Registrador de Saída (Guarda o Ciphertext finalizado)
     CipherTextRegister : entity work.VectorRegister
         generic map(N => 128)
-        port map(clk => clk, enable => cCipher, vector_in => addRndKey2Out, vector_out => ciphertext);
+        port map(clk => clk, enable => cCipher,rst=> rst, vector_in => addRndKey2Out, vector_out => ciphertext);
         end architecture arch;

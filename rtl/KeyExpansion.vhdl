@@ -10,9 +10,10 @@ entity KeyExpansion is
         round    : in  std_logic_vector(3 downto 0);  
         key_out  : out std_logic_vector(127 downto 0)
     );
-end entity KeyExpansion;
+end entity;
 
 architecture arch of KeyExpansion is
+
     signal GOut : std_logic_vector(31 downto 0);
     signal w0_new, w1_new, w2_new, w3_new : std_logic_vector(31 downto 0);
 begin
