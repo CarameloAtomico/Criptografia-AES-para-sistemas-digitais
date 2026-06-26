@@ -17,7 +17,7 @@ architecture arch of ROM_Rcon is
     );
 begin
     process(data_in)
-        variable index : natural range 0 to 9;
+        variable index : natural;
     begin
         index := to_integer(unsigned(data_in));
         if index >= 0 and index <= 9 then
