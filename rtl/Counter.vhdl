@@ -5,17 +5,19 @@ use ieee.numeric_std.all;
 entity Counter is
     generic (
         limit : positive := 9;
-        N : positive := 4
-        );
+        N     : positive := 4
+    );
     port (
-        clk, enable, sel : in std_logic;
-        maior : out std_logic
+        
+        clk, rst, enable, sel : in std_logic; 
+        count                 : out std_logic_vector(N-1 downto 0);
+        maior                 : out std_logic
     );
 end Counter;
 
 architecture arch of Counter is
-    signal i : unsigned(N - 1 downto 0); 
-    signal muxOut, regOut : std_logic_vector(N - 1 downto 0);
+    signal i : unsigned(N - 1 downto 0) := (others => '0'); 
+    signal muxOut, regOut : std_logic_vector(N - 1 downto 0) := (others => '0');
 begin
     mux : entity work.Mux2x1(arch)
         generic map (N => N)
@@ -28,27 +30,31 @@ begin
     
     reg : entity work.VectorRegister(arch)
         generic map (N => N)
-        port map (clk => clk, 
-            enable => enable, 
-            vector_in => muxOut, 
+        port map (
+            clk        => clk,
+            rst        => rst, 
+            enable     => enable, 
+            vector_in  => muxOut, 
             vector_out => regOut
         );
 
     adder : entity work.HalfAdder(arch)
         generic map (N => N)
         port map (
-            a => unsigned(regOut), 
-            b => to_unsigned(1, N), 
+            a   => unsigned(regOut), 
+            b   => to_unsigned(1, N), 
             sum => i
         );
 
     comparator : entity work.Comparator
-        generic map(
-            N => N
-        )
+        generic map(N => N)
         port map(
-            a     => i,
+            a     => unsigned(regOut),
             b     => to_unsigned(limit, N),
             maior => maior
         );
+
+ 
+    count <= regOut;
+
 end architecture arch;
